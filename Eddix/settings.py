@@ -76,13 +76,11 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Make sure this path exists
-]
-
-
+# Static files (CSS, JS, etc.)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
+# Where collectstatic will place files
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise will serve files from STATIC_ROOT
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
