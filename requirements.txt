@@ -4,3 +4,4 @@ channels-redis==4.1.0
 redis==5.0.1
 mysqlclient==2.2.0
 whitenoise==6.5.0
+daphne==4.0.0
