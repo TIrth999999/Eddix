@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Collaborative Editor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .container { text-align: center; }
+        input, button { padding: 10px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .form-group { margin: 20px 0; }
+        .error { color: red; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Collaborative Editor</h1>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <div class="form-group">
+            <h3>Create New Room</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create">
+                <input type="text" name="room_name" placeholder="Room Name" required>
+                <button type="submit">Create Room</button>
+            </form>
+        </div>
+        
+        <div class="form-group">
+            <h3>Join Existing Room</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="join">
+                <input type="text" name="room_code" placeholder="Room Code" required>
+                <button type="submit">Join Room</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
