@@ -628,9 +628,10 @@
         function getEditorMode(filename) {
             const ext = filename.split('.').pop().toLowerCase();
             const modes = {
-                'js': 'javascript',
+                'txt': 'text',
                 'py': 'python',
-                'html': 'htmlmixed',
+                'js': 'javascript',
+                'html' : 'htmlmixed',
                 'css': 'css',
                 'json': 'javascript',
                 'md': 'markdown',
