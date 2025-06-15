@@ -1,1 +1,1 @@
-web: daphne myproject.asgi:application --port 8000 --bind 0.0.0.0
+web: daphne Eddix.asgi:application

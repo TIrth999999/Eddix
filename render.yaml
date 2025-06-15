@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: django-asgi-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: daphne Eddix.asgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: Eddix.settings
+      - key: SECRET_KEY
+        value: pgl5v)d#c$f%$oohe#8q9@w^_+yr#m1cmb0g@@&$sfty%=o1_c
