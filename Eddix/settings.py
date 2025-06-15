@@ -17,6 +17,9 @@ INSTALLED_APPS = [
     'channels',
     'editor',
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://eddix.onrender.com'
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
