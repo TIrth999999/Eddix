@@ -75,10 +75,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": ["rediss://default:AbpDAAIjcDEzMzY2ODk0NzJjOTE0Y2ViYjc5M2ViMWMyMjU2MzhlMHAxMA@maximum-mantis-47683.upstash.io:6379"],
+            "hosts": ["rediss://default:ATtkAAIjcDEzNGI0NjY0YzY2MWY0MzFlOTVmODc1M2RiZTNjM2Q4MHAxMA@rational-stinkbug-15204.upstash.io:6379"],
         },
     },
 }
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+LOGIN_URL = '/login/'

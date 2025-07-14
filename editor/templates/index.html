@@ -3,33 +3,157 @@
 <head>
     <title>Collaborative Editor</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-        .container { text-align: center; }
-        input, button { padding: 10px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
-        button { background: #007bff; color: white; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .form-group { margin: 20px 0; }
-        .error { color: red; margin: 10px 0; }
+        :root {
+            --black: #121212;
+            --light-black: #1E1E1E;
+            --primary: #BB86FC;
+            --text-main: #F8F8F8;
+            --text-secondary: #B0B0B0;
+            --border: #232323;
+            --radius: 0.75rem;
+            --transition: all 0.2s cubic-bezier(.4,0,.2,1);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: var(--black);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 2rem 1.5rem;
+            background: var(--light-black);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(34,34,34,0.10);
+        }
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        input, button {
+            padding: 0.75rem 1rem;
+            margin: 5px;
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius);
+            background: var(--black);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        input:focus {
+            outline: 2px solid var(--primary);
+            background: var(--light-black);
+        }
+        button {
+            background: var(--primary);
+            color: var(--black);
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+        button:hover {
+            background: var(--primary);
+            filter: brightness(1.1);
+        }
+        .form-group { margin: 2rem 0; }
+        .error { color: #ff6b6b; margin: 10px 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--black);
+            color: var(--text-main);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        th, td {
+            padding: 0.9rem 0.7rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--light-black);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        tr:last-child td { border-bottom: none; }
+        a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+        a:hover { color: var(--primary); text-decoration: underline; }
+        .credits {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .delete-btn {
+            background: #ff6b6b !important;
+            color: #fff !important;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .delete-btn:hover {
+            filter: brightness(1.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Real-Time Collaborative Editor</h1>
-        
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}! <a href="/logout/">Logout</a></p>
+            <p>Your Credits: <strong class="credits">{{ user_credits }}</strong></p>
+            {% if user_rooms %}
+                <div class="form-group">
+                    <h3>Your Rooms</h3>
+                    <table>
+                        <tr><th>Name</th><th>Code</th><th>Created</th><th>Actions</th></tr>
+                        {% for room in user_rooms %}
+                        <tr>
+                            <td>{{ room.name }}</td>
+                            <td>{{ room.code }}</td>
+                            <td>{{ room.created_at|date:'Y-m-d H:i' }}</td>
+                            <td>
+                                <a href="{% url 'room' room.code %}">Rejoin</a>
+                                <form method="post" action="{% url 'delete_room' room.code %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+        {% else %}
+            <p><a href="/login/">Login</a> | <a href="/signup/">Sign Up</a></p>
+        {% endif %}
         {% if error %}
             <div class="error">{{ error }}</div>
         {% endif %}
-        
         <div class="form-group">
             <h3>Create New Room</h3>
+            {% if user.is_authenticated %}
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="create">
                 <input type="text" name="room_name" placeholder="Room Name" required>
                 <button type="submit">Create Room</button>
             </form>
+            {% else %}
+            <p>You must <a href="/login/">login</a> to create a room.</p>
+            {% endif %}
         </div>
-        
         <div class="form-group">
             <h3>Join Existing Room</h3>
             <form method="post">

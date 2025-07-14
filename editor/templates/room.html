@@ -4,536 +4,456 @@
     <title>Room {{ room.code }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
     <style>
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-tertiary: #e9ecef;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --border-color: #dee2e6;
-            --accent-color: #0d6efd;
-            --accent-hover: #0b5ed7;
-            --success-color: #198754;
-            --warning-color: #fd7e14;
-            --danger-color: #dc3545;
-            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --black: #121212; /* 00dp */
+            --light-black: #1E1E1E; /* 06dp overlay */
+            --primary: #BB86FC;
+            --text-main: #F8F8F8;
+            --text-secondary: #B0B0B0;
+            --border: #232323;
+            --header-shadow: 0 2px 8px rgba(34, 34, 34, 0.7);
+            --radius: 0.75rem;
+            --transition: all 0.2s cubic-bezier(.4,0,.2,1);
         }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-tertiary: #404040;
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --border-color: #404040;
-            --accent-color: #4dabf7;
-            --accent-hover: #339af0;
-            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
-            height: 100vh;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: var(--black);
+            color: var(--text-main);
+            min-height: 100vh;
             overflow: hidden;
         }
-
+        a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+        a:hover { color: var(--primary); text-decoration: underline; }
         .header {
-            background: var(--bg-secondary);
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            background: var(--light-black);
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            box-shadow: var(--shadow);
+            box-shadow: var(--header-shadow);
+            border-radius: 0 0 var(--radius) var(--radius);
         }
-
         .header-left h2 {
             margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
         }
-
         .header-left p {
             margin: 0.25rem 0 0 0;
-            font-size: 0.875rem;
+            font-size: 1rem;
             color: var(--text-secondary);
         }
-
         .room-code {
-            background: var(--bg-tertiary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-            font-family: 'Courier New', monospace;
+            background: var(--black);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius);
+            font-family: 'Cascadia Code', 'Courier New', monospace;
             font-weight: 600;
-            color: var(--accent-color);
+            color: var(--primary);
+            font-size: 1.1rem;
+            border: 1px solid var(--primary);
+            margin-left: 0.5rem;
         }
-
-        .header-right {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
+        .header-right { display: flex; gap: 0.75rem; align-items: center; }
         .btn {
-            padding: 0.5rem 1rem;
-            background: var(--accent-color);
-            color: white;
+            padding: 0.6rem 1.3rem;
+            background: var(--primary);
+            color: var(--black);
             border: none;
-            border-radius: 0.375rem;
+            border-radius: var(--radius);
             cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
+            box-shadow: 0 2px 8px rgba(187,134,252,0.08);
         }
-
-        .btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-
+        .btn:hover { background: var(--primary); color: var(--black); transform: translateY(-2px) scale(1.03); box-shadow: 0 4px 16px rgba(187,134,252,0.12); }
         .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
+            background: var(--light-black);
+            color: var(--primary);
+            border: 1px solid var(--primary);
         }
-
-        .btn-secondary:hover {
-            background: var(--border-color);
-        }
-
+        .btn-secondary:hover { background: var(--primary); color: var(--black); }
         .btn-success {
-            background: var(--success-color);
+            background: var(--primary);
+            color: var(--black);
         }
-
-        .btn-success:hover {
-            background: #157347;
-        }
-
-        .theme-toggle {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 1.25rem;
-            transition: all 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: var(--border-color);
-            transform: scale(1.1);
-        }
-
+        .btn-success:hover { background: var(--primary); color: var(--black); }
         .container {
             display: flex;
-            height: calc(100vh - 80px);
-            background: var(--bg-primary);
+            height: calc(100vh - 90px);
+            background: var(--black);
+            flex: 1 1 auto;
+            min-height: 0;
         }
-
         .sidebar {
-            width: 350px;
-            min-width: 300px;
-            max-width: 500px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
+            width: 340px;
+            min-width: 240px;
+            max-width: 480px;
+            background: var(--light-black);
+            border-right: 1.5px solid var(--border);
             display: flex;
             flex-direction: column;
             resize: horizontal;
             overflow: hidden;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            box-shadow: 2px 0 12px rgba(34,34,34,0.12);
+            width: 20%;
         }
-
         .sidebar-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-tertiary);
+            padding: 1.2rem 1rem 1rem 1rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--light-black);
         }
-
         .sidebar-header h3 {
             margin: 0 0 1rem 0;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
         }
-
         .upload-area {
-            border: 2px dashed var(--border-color);
-            padding: 1.5rem;
+            border: 2px dashed var(--primary);
+            padding: 1.2rem;
             text-align: center;
-            border-radius: 0.5rem;
-            background: var(--bg-primary);
-            transition: all 0.3s ease;
+            border-radius: var(--radius);
+            background: var(--black);
+            transition: var(--transition);
             cursor: pointer;
-        }
-
-        .upload-area:hover, .upload-area.dragover {
-            border-color: var(--accent-color);
-            background: var(--bg-secondary);
-            transform: scale(1.02);
-        }
-
-        .upload-area p {
-            margin: 0 0 1rem 0;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
         }
-
-        .upload-buttons {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--light-black);
+            transform: scale(1.03);
+            color: var(--primary);
         }
-
-        .upload-buttons .btn {
-            font-size: 0.75rem;
-            padding: 0.375rem 0.75rem;
-        }
-
-        .file-tree-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-        }
-
+        .upload-area p { margin: 0 0 1rem 0; font-size: 0.95rem; }
+        .upload-buttons { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+        .upload-buttons .btn { font-size: 0.85rem; padding: 0.4rem 1rem; }
+        .file-tree-container { flex: 1; overflow-y: auto; padding: 1rem 0.5rem 1rem 1rem; }
         .file-tree {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            font-size: 0.875rem;
-            line-height: 1.5;
+            font-family: 'Cascadia Code', 'SF Mono', Monaco, 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
         }
-
         .tree-item {
-            padding: 0.375rem 0.5rem;
+            padding: 0.4rem 0.7rem;
             cursor: pointer;
-            border-radius: 0.375rem;
+            border-radius: var(--radius);
             display: flex;
             align-items: center;
-            transition: all 0.2s ease;
+            transition: var(--transition);
             position: relative;
             user-select: none;
+            margin-bottom: 2px;
         }
-
-        .tree-item:hover {
-            background: var(--bg-tertiary);
-            transform: translateX(2px);
-        }
-
-        .tree-item.active {
-            background: var(--accent-color);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .tree-item.folder {
-            font-weight: 500;
-            color: var(--accent-color);
-        }
-
-        .tree-item.folder.expanded {
-            color: var(--warning-color);
-        }
-
-        .tree-item.file {
-            color: var(--text-primary);
-        }
-
-        .tree-icon {
-            margin-right: 0.5rem;
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-            transition: transform 0.2s ease;
-        }
-
-        .tree-item.folder .tree-icon {
-            cursor: pointer;
-        }
-
-        .tree-item.folder.expanded .tree-icon {
-            transform: rotate(15deg);
-        }
-
-        .tree-indent {
-            margin-left: 1.5rem;
-            position: relative;
-            border-left: 1px solid var(--border-color);
-            padding-left: 1rem;
-        }
-
+        .tree-item:hover { background: var(--primary); color: var(--black); transform: translateX(2px) scale(1.01); }
+        .tree-item.active { background: var(--primary); color: var(--black); box-shadow: 0 2px 8px rgba(187,134,252,0.10); }
+        .tree-item.folder { font-weight: 600; color: var(--primary); }
+        .tree-item.folder.expanded { color: var(--primary); }
+        .tree-item.file { color: var(--text-main); }
+        .tree-icon { margin-right: 0.7rem; width: 22px; text-align: center; font-size: 18px; transition: var(--transition); }
+        .tree-item.folder .tree-icon { cursor: pointer; }
+        .tree-item.folder.expanded .tree-icon { transform: rotate(15deg) scale(1.1); }
+        .tree-indent { margin-left: 1.7rem; position: relative; border-left: 1.5px solid var(--border); padding-left: 1.1rem; }
         .editor-container {
-            flex: 1;
+            flex: 1 1 auto;
+            min-height: 0;
             display: flex;
             flex-direction: column;
-            background: var(--bg-primary);
-            overflow: hidden;
+            background: var(--black);
+            overflow-y: auto;   
+            border-radius: var(--radius) 0 0 var(--radius);
+            width: 80%;
         }
-
         .editor-header {
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
+            padding: 1.1rem 1.5rem;
+            background: var(--light-black);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-radius: var(--radius) var(--radius) 0 0;
         }
-
         .editor-title {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
             margin: 0;
+            letter-spacing: 0.5px;
         }
-
-        .editor-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
+        .editor-actions { display: flex; gap: 0.5rem; }
         #editorPlaceholder {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background: var(--bg-secondary);
+            background: var(--light-black);
             color: var(--text-secondary);
             text-align: center;
-            padding: 2rem;
+            padding: 2.5rem;
+            border-radius: 0 0 var(--radius) var(--radius);
         }
-
-        #editorPlaceholder h3 {
-            margin: 0 0 1rem 0;
-            font-size: 1.5rem;
-            font-weight: 300;
-        }
-
-        #editorPlaceholder p {
-            margin: 0;
-            font-size: 1rem;
-        }
-
+        #editorPlaceholder h3 { margin: 0 0 1rem 0; font-size: 1.7rem; font-weight: 400; color: var(--primary); }
+        #editorPlaceholder p { margin: 0; font-size: 1.1rem; }
         .editor-wrapper {
-            flex: 1;
+            flex: 1 1 auto;
             display: none;
-            overflow: hidden;
+            overflow-y: auto;
+            min-height: 0;
         }
-
         .CodeMirror {
             height: 100% !important;
-            font-size: 14px;
-            line-height: 1.6;
+            max-height: 100%;
+            min-height: 0;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: var(--black) !important;
+            color: var(--text-main) !important;
+            border-radius: 0 0 var(--radius) var(--radius);
+            box-shadow: 0 2px 8px rgba(34,34,34,0.10);
         }
-
+        .CodeMirror-gutters {
+            background: var(--light-black) !important;
+            border-right: 1.5px solid var(--primary) !important;
+            color: var(--primary) !important;
+        }
+        .CodeMirror-linenumber {
+            color: var(--primary) !important;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+        .CodeMirror-cursor {
+            border-left: 2px solid var(--primary) !important;
+        }
+        .CodeMirror-selected {
+            background: rgba(187,134,252,0.18) !important;
+        }
+        .CodeMirror-activeline-background {
+            background: rgba(187,134,252,0.10) !important;
+        }
+        .cm-s-default .cm-keyword {
+            color: var(--primary) !important;
+            font-weight: 600;
+        }
+        .cm-s-default .cm-string {
+            color: var(--primary) !important;
+        }
+        .cm-s-default .cm-number {
+            color: #82aaff !important;
+        }
+        .cm-s-default .cm-comment {
+            color: #6c757d !important;
+            font-style: italic;
+        }
+        .cm-s-default .cm-variable {
+            color: #f8f8f8 !important;
+        }
+        .cm-s-default .cm-def {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-operator {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-builtin {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-tag {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-attribute {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-header {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-link {
+            color: #BB86FC !important;
+        }
+        .cm-s-default .cm-error {
+            color: #ff5370 !important;
+            background: transparent !important;
+        }
         .CodeMirror-scroll {
             max-height: 100%;
+            min-height: 0;
+            overflow-y: auto !important;
         }
-
         .status {
-            padding: 0.75rem 1rem;
-            background: var(--bg-tertiary);
-            border-top: 1px solid var(--border-color);
-            font-size: 0.875rem;
+            position: fixed;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            background: var(--light-black);
+            border-top: 1px solid var(--border);
+            font-size: 1rem;
             color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .status-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success-color);
-            animation: pulse 2s infinite;
-        }
-
-        .status-indicator.disconnected {
-            background: var(--danger-color);
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .share-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            min-width: 400px;
+            border-radius: 0 0 var(--radius) var(--radius);
             display: none;
         }
-
-        .share-popup h3 {
-            margin: 0 0 1rem 0;
-            color: var(--text-primary);
+        .status-left { display: flex; align-items: center; gap: 1.2rem; }
+        .connection-status { display: flex; align-items: center; gap: 0.7rem; }
+        .status-indicator { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); animation: pulse 2s infinite; }
+        .status-indicator.disconnected { background: #dc3545; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .share-popup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--light-black);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem 2rem 2rem;
+            box-shadow: 0 8px 32px rgba(34,34,34,0.45);
+            z-index: 1000;
+            min-width: 340px;
+            max-width: 95vw;
+            display: none;
         }
-
-        .share-input-group {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
+        .share-popup h3 { margin: 0 0 1rem 0; color: var(--primary); font-size: 1.3rem; }
+        .share-input-group { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; }
         .share-input {
             flex: 1;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.375rem;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
+            padding: 0.6rem;
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius);
+            background: var(--black);
+            color: var(--text-main);
+            font-family: 'Cascadia Code', 'Courier New', monospace;
+            font-size: 1rem;
         }
-
         .popup-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(18,18,18,0.7);
             z-index: 999;
             display: none;
         }
-
-        .file-type-icon {
-            margin-right: 0.25rem;
+        .file-type-icon { margin-right: 0.25rem; }
+        /* User list styles */
+        #userListBar {
+            background: var(--light-black);
+            border-bottom: 1px solid var(--border);
+            padding: 0.7rem 2rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
-
+        #userListBar span[style*='font-weight:600'] {
+            color: var(--primary) !important;
+        }
         /* Responsive design */
+        @media (max-width: 1100px) {
+            .container { flex-direction: column; height: auto; }
+            .sidebar { width: 100%; min-width: 0; max-width: 100vw; height: auto; border-radius: var(--radius) var(--radius) 0 0; }
+            .editor-container { border-radius: 0 0 var(--radius) var(--radius); }
+        }
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .header-right {
-                justify-content: space-between;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: 40vh;
-                resize: none;
-            }
-            
-            .container {
-                flex-direction: column;
-            }
+            .header { flex-direction: column; align-items: stretch; padding: 1rem 0.7rem; }
+            .header-right { justify-content: space-between; }
+            .sidebar { width: 100%; height: 40vh; resize: none; }
+            .container { flex-direction: column; height: auto; }
+            .editor-header, .status { padding: 1rem 0.7rem; }
+            #userListBar { padding: 0.7rem 0.7rem; }
         }
-
+        @media (max-width: 500px) {
+            .header-left h2 { font-size: 1.2rem; }
+            .sidebar-header h3 { font-size: 1rem; }
+            .btn, .btn-secondary, .btn-success { font-size: 0.95rem; padding: 0.5rem 0.7rem; }
+            .editor-title { font-size: 0.95rem; }
+        }
         /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-secondary);
-        }
-
-        /* New styles for loading and error states */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--light-black); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         .loading-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(18,18,18,0.85);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             display: none;
         }
-
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--bg-secondary);
-            border-top: 4px solid var(--accent-color);
+            width: 44px; height: 44px;
+            border: 5px solid var(--light-black);
+            border-top: 5px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .error-message {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--danger-color);
+            top: 24px; right: 24px;
+            background: #dc3545;
             color: white;
-            padding: 1rem;
-            border-radius: 0.5rem;
+            padding: 1.1rem 1.5rem;
+            border-radius: var(--radius);
             z-index: 10000;
             animation: slideIn 0.3s ease-out;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(220,53,69,0.18);
         }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        /* Top bar (dashboard link, user info) */
+        .top-bar {
+            background: var(--light-black);
+            padding: 0.7rem 0 0.7rem 0;
+            border-bottom: 1px solid var(--border);
+            text-align: right;
+            font-size: 1.05rem;
+            border-radius: 0 0 var(--radius) var(--radius);
+            box-shadow: 0 2px 8px rgba(34,34,34,0.10);
         }
+        .top-bar a { color: var(--primary); font-weight: 600; }
+        .top-bar a:hover { color: var(--primary); }
+        .top-bar .user-info { margin-right: 24px; color: var(--primary); }
+        .top-bar .user-info strong { color: var(--primary); }
+        .top-bar .dashboard-link { float: left; margin-left: 24px; }
+        .top-bar .clear { clear: both; }
     </style>
 </head>
 <body>
+    <div class="top-bar">
+        <span class="dashboard-link"><a href="/">&larr; Dashboard</a></span>
+        {% if user.is_authenticated %}
+            <span class="user-info">Logged in as <strong>{{ user.username }}</strong></span>
+        {% endif %}
+        <div class="clear"></div>
+    </div>
     <div class="popup-overlay" id="popupOverlay"></div>
-    
     <div class="share-popup" id="sharePopup">
         <h3>Share Room</h3>
-        <p>Share this link with others to collaborate:</p>
+        <p style="color:var(--text-secondary);margin-bottom:0.7rem;">Share this link with others to collaborate:</p>
         <div class="share-input-group">
             <input type="text" class="share-input" id="shareInput" readonly>
             <button class="btn btn-success" onclick="copyShareLink()">📋 Copy</button>
@@ -542,7 +462,6 @@
             <button class="btn btn-secondary" onclick="closeSharePopup()">Close</button>
         </div>
     </div>
-
     <div class="header">
         <div class="header-left">
             <h2>{{ room.name }}</h2>
@@ -551,10 +470,13 @@
         <div class="header-right">
             <button class="btn btn-success" onclick="showSharePopup()">🔗 Share</button>
             <button class="btn" onclick="downloadRoom()">⬇️ Download</button>
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
         </div>
     </div>
-    
+    <!-- User list display -->
+    <div id="userListBar">
+        <span style="font-weight:600; color:var(--primary);">Users in Room:</span>
+        <span id="userList"></span>
+    </div>
     <div class="container">
         <div class="sidebar">
             <div class="sidebar-header">
@@ -569,48 +491,56 @@
                     </div>
                 </div>
             </div>
-            
             <div class="file-tree-container">
                 <div class="file-tree" id="fileTree">
                     <!-- Tree structure will be built by JavaScript -->
                 </div>
             </div>
         </div>
-        
         <div class="editor-container">
-            <div class="editor-header" id="editorHeader" style="display: none;">
-                <h4 class="editor-title" id="editorTitle">No file selected</h4>
-                <div class="editor-actions">
-                    <button class="btn btn-secondary" onclick="closeFile()">✕ Close</button>
-                </div>
+            <div style="display: flex; border-bottom: 1px solid var(--border); background: var(--light-black);">
+                <button id="tabEditor" class="btn" style="border-radius:0; border-bottom: none; background:var(--light-black); color:var(--primary); flex:1;" onclick="showTab('editor')">Editor</button>
+                <button id="tabChat" class="btn" style="border-radius:0; border-bottom: none; background:var(--light-black); color:var(--primary); flex:1;" onclick="showTab('chat')">💬 Chat</button>
             </div>
-            
-            <div id="editorPlaceholder">
-                <h3>🚀 Ready to Code!</h3>
-                <p>Select a file from the sidebar or upload new files to start editing.</p>
-            </div>
-            
-            <div class="editor-wrapper" id="editorWrapper">
-                <textarea id="codeEditor"></textarea>
-            </div>
-            
-            <div class="status" id="status">
-                <div class="status-left">
-                    <div class="connection-status">
-                        <div class="status-indicator" id="statusIndicator"></div>
-                        <span id="statusText">Connecting...</span>
+            <div id="editorPanel">
+                <div class="editor-header" id="editorHeader" style="display: none;">
+                    <h4 class="editor-title" id="editorTitle">No file selected</h4>
+                    <div class="editor-actions">
+                        <button class="btn btn-secondary" onclick="closeFile()">✕ Close</button>
+                        <button class="btn btn-success" id="saveBtn" onclick="saveAllFiles()" style="display:none;">💾 Save</button>
                     </div>
-                    <span id="fileInfo"></span>
                 </div>
-                <span id="cursorInfo"></span>
+                <div id="editorPlaceholder">
+                    <h3>🚀 Ready to Code!</h3>
+                    <p>Select a file from the sidebar or upload new files to start editing.</p>
+                </div>
+                <div class="editor-wrapper" id="editorWrapper">
+                    <textarea id="codeEditor"></textarea>
+                </div>
+                <div class="status" id="status">
+                    <div class="status-left">
+                        <div class="connection-status">
+                            <div class="status-indicator" id="statusIndicator"></div>
+                            <span id="statusText">Connecting...</span>
+                        </div>
+                        <span id="fileInfo"></span>
+                    </div>
+                    <span id="cursorInfo"></span>
+                </div>
+            </div>
+            <div id="chatPanel" style="display:none; height:100%; flex-direction:column; background:var(--black);">
+                <div id="chatMessages" style="flex:1; overflow-y:auto; padding:1rem; min-height:200px; max-height:40vh; background:var(--light-black); border-bottom:1px solid var(--border); border-radius:0 0 var(--radius) var(--radius);"></div>
+                <form id="chatForm" style="display:flex; padding:1rem; gap:0.5rem; background:var(--light-black); border-top:1px solid var(--border);" onsubmit="sendChatMessage(event)">
+                    <input id="chatInput" type="text" placeholder="Type a message..." autocomplete="off" style="flex:1; padding:0.6rem; border-radius: var(--radius); border:1.5px solid var(--primary); background:var(--black); color:var(--text-main); font-size:1rem;" />
+                    <button class="btn btn-success" type="submit">Send</button>
+                </form>
             </div>
         </div>
     </div>
-
     <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
+        <div style="color:var(--primary); margin-top:20px; font-size:1.2rem;">Uploading files...</div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
@@ -619,7 +549,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/markdown/markdown.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
-
     <script>
         const roomCode = '{{ room.code }}';
         let currentFileId = null;
@@ -645,29 +574,8 @@
         let currentFile = null;
         let socket = null;
 
-        // Theme management
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
-        }
-
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            
-            const themeToggle = document.getElementById('themeToggle');
-            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-            
-            if (editor) {
-                editor.setOption('theme', theme === 'dark' ? 'monokai' : 'eclipse');
-            }
-        }
+        // Track unsaved changes for each file
+        const unsavedChanges = {};
 
         // File type detection
         function getFileIcon(filename) {
@@ -746,30 +654,33 @@
         function initWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             ws = new WebSocket(`${protocol}//${window.location.host}/ws/room/${roomCode}/`);
-            
             ws.onopen = function() {
                 updateConnectionStatus('connected', 'Connected');
             };
-            
             ws.onmessage = function(event) {
                 const data = JSON.parse(event.data);
                 if (data.type === 'file_update' && data.file_id === currentFileId) {
                     applyRemoteChange(data);
                 }
+                if (data.type === 'user_list') {
+                    updateUserList(data.users);
+                }
+                if (data.type === 'chat_message') {
+                    appendChatMessage(data.username, data.message);
+                }
             };
-            
             ws.onclose = function() {
                 updateConnectionStatus('disconnected', 'Disconnected - Reconnecting...');
                 setTimeout(initWebSocket, 1000);
             };
         }
 
-        function updateConnectionStatus(status, text) {
-            const indicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            
-            indicator.className = `status-indicator ${status === 'connected' ? '' : 'disconnected'}`;
-            statusText.textContent = text;
+        // Update the user list in the UI
+        function updateUserList(users) {
+            const userListElem = document.getElementById('userList');
+            if (userListElem) {
+                userListElem.innerHTML = users.map(u => `<span style='margin-right:10px;'>👤 ${u}</span>`).join('');
+            }
         }
 
         // Remote change handling
@@ -833,7 +744,7 @@
             editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
                 lineNumbers: true,
                 mode: 'javascript',
-                theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'monokai' : 'eclipse',
+                theme: 'monokai',
                 indentUnit: 2,
                 lineWrapping: true,
                 autoCloseBrackets: true,
@@ -850,43 +761,15 @@
             if (isReceivingUpdate || !currentFileId || !ws || ws.readyState !== WebSocket.OPEN) {
                 return;
             }
-            
             localVersion++;
-            
             if (changeTimeout) {
                 clearTimeout(changeTimeout);
             }
-            
-            const changeData = {
-                type: 'file_change',
-                file_id: currentFileId,
-                content: editor.getValue(),
-                operation: {
-                    type: 'change',
-                    from: change.from,
-                    to: change.to,
-                    text: change.text,
-                    version: localVersion
-                }
-            };
-            
-            ws.send(JSON.stringify(changeData));
-            lastSentVersion = localVersion;
-            
-            changeTimeout = setTimeout(() => {
-                if (localVersion > lastSentVersion && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({
-                        type: 'file_change',
-                        file_id: currentFileId,
-                        content: editor.getValue(),
-                        operation: {
-                            type: 'sync',
-                            version: localVersion
-                        }
-                    }));
-                    lastSentVersion = localVersion;
-                }
-            }, 300);
+            // Mark file as having unsaved changes
+            unsavedChanges[currentFileId] = editor.getValue();
+            updateFileTreeUnsaved(currentFileId, true);
+            // Show save button
+            document.getElementById('saveBtn').style.display = '';
         }
 
         function updateCursorInfo() {
@@ -919,6 +802,11 @@
                     
                     updateCursorInfo();
                     editor.focus();
+                    
+                    // Update status to connected if ws is open
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        document.getElementById('statusText').textContent = 'Connected';
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading file:', error);
@@ -941,6 +829,43 @@
             document.querySelectorAll('.tree-item.active').forEach(item => {
                 item.classList.remove('active');
             });
+            // Reset scroll position of editor-wrapper and CodeMirror
+            const wrapper = document.getElementById('editorWrapper');
+            if (wrapper) wrapper.scrollTop = 0;
+            if (editor && editor.getScrollerElement) {
+                editor.getScrollerElement().scrollTop = 0;
+            }
+            // Hide save button
+            document.getElementById('saveBtn').style.display = 'none';
+        }
+
+        function saveAllFiles() {
+            if (Object.keys(unsavedChanges).length === 0) return;
+            ws.send(JSON.stringify({
+                type: 'save_files',
+                files: unsavedChanges
+            }));
+            // Remove unsaved mark
+            for (const fileId in unsavedChanges) {
+                updateFileTreeUnsaved(fileId, false);
+            }
+            // Clear unsaved changes
+            for (const key in unsavedChanges) delete unsavedChanges[key];
+            // Hide save button
+            document.getElementById('saveBtn').style.display = 'none';
+        }
+
+        function updateFileTreeUnsaved(fileId, unsaved) {
+            const item = document.querySelector(`.tree-item[data-file-id='${fileId}']`);
+            if (item) {
+                if (unsaved) {
+                    item.style.background = 'var(--primary)';
+                    item.style.color = 'var(--black)';
+                } else {
+                    item.style.background = '';
+                    item.style.color = '';
+                }
+            }
         }
 
         // File tree management
@@ -959,7 +884,7 @@
             ];
             
             if (files.length === 0) {
-                fileTree.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No files uploaded yet</div>';
+                fileTree.innerHTML = '<div style="text-align: center; color: #b3b3b3; padding: 2rem;">No files uploaded yet</div>';
                 return;
             }
             
@@ -1108,8 +1033,7 @@
                 formData.append('files', file);
             }
             
-            // Show upload progress
-            updateConnectionStatus('connected', 'Uploading files...');
+            showLoadingIndicator();
             
             fetch(`/upload/${roomCode}/`, {
                 method: 'POST',
@@ -1117,16 +1041,22 @@
             })
             .then(response => response.json())
             .then(data => {
+                hideLoadingIndicator();
                 if (data.status === 'success') {
                     updateConnectionStatus('connected', 'Files uploaded successfully');
-                    setTimeout(() => {
-                        location.reload(); // Refresh to show new files
-                    }, 1000);
+                    // Fetch latest file list and rebuild file tree
+                    fetch(`/api/filelist/${roomCode}/`)
+                        .then(resp => resp.json())
+                        .then(fileData => {
+                            window.latestFiles = fileData.files;
+                            buildFileTreeDynamic(fileData.files);
+                        });
                 } else {
                     updateConnectionStatus('disconnected', 'Upload failed');
                 }
             })
             .catch(error => {
+                hideLoadingIndicator();
                 console.error('Upload error:', error);
                 updateConnectionStatus('disconnected', 'Upload failed');
             });
@@ -1166,12 +1096,6 @@
                 if ((e.ctrlKey || e.metaKey) && e.key === 'w' && currentFileId) {
                     e.preventDefault();
                     closeFile();
-                }
-                
-                // Ctrl/Cmd + Shift + L to toggle theme
-                if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'L') {
-                    e.preventDefault();
-                    toggleTheme();
                 }
             });
         }
@@ -1266,9 +1190,91 @@
             };
         }
 
+        // Tab switching logic
+        function showTab(tab) {
+            const editorPanel = document.getElementById('editorPanel');
+            const chatPanel = document.getElementById('chatPanel');
+            const tabEditor = document.getElementById('tabEditor');
+            const tabChat = document.getElementById('tabChat');
+            if (tab === 'editor') {
+                editorPanel.style.display = '';
+                chatPanel.style.display = 'none';
+                tabEditor.style.background = 'var(--light-black)';
+                tabChat.style.background = 'var(--black)';
+            } else {
+                editorPanel.style.display = 'none';
+                chatPanel.style.display = 'flex';
+                tabEditor.style.background = 'var(--black)';
+                tabChat.style.background = 'var(--light-black)';
+            }
+        }
+        // Default to editor tab
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('editor');
+        });
+
+        // Chat message sending
+        function sendChatMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message && ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'chat_message', message: message }));
+                input.value = '';
+            }
+        }
+        // Chat message receiving
+        function appendChatMessage(username, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const msgElem = document.createElement('div');
+            msgElem.innerHTML = `<span style='color:var(--primary); font-weight:600;'>${username}:</span> <span style='color:var(--text-main);'>${message}</span>`;
+            chatMessages.appendChild(msgElem);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        // Extend WebSocket message handler
+        const oldOnMessage = ws && ws.onmessage;
+        function handleWSMessage(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'file_update' && data.file_id === currentFileId) {
+                applyRemoteChange(data);
+            }
+            if (data.type === 'user_list') {
+                updateUserList(data.users);
+            }
+            if (data.type === 'chat_message') {
+                appendChatMessage(data.username, data.message);
+            }
+            if (oldOnMessage) oldOnMessage(event);
+        }
+        // Patch ws.onmessage after initWebSocket
+        const oldInitWebSocket = initWebSocket;
+        initWebSocket = function() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${protocol}//${window.location.host}/ws/room/${roomCode}/`);
+            ws.onopen = function() {
+                updateConnectionStatus('connected', 'Connected');
+            };
+            ws.onmessage = handleWSMessage;
+            ws.onclose = function() {
+                updateConnectionStatus('disconnected', 'Disconnected - Reconnecting...');
+                setTimeout(initWebSocket, 1000);
+            };
+        }
+
+        // Add a new function to build the file tree from a given file list
+        function buildFileTreeDynamic(files) {
+            const fileTree = document.getElementById('fileTree');
+            if (!files || files.length === 0) {
+                fileTree.innerHTML = '<div style="text-align: center; color: #b3b3b3; padding: 2rem;">No files uploaded yet</div>';
+                return;
+            }
+            const tree = buildTreeStructure(files);
+            fileTree.innerHTML = renderTree(tree, 0);
+            fileTree.addEventListener('click', handleTreeClick);
+        }
+
         // Initialize everything
         document.addEventListener('DOMContentLoaded', function() {
-            initTheme();
             initWebSocket();
             initEditor();
             initUploadHandlers();

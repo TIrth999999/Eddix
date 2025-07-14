@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account</title>
+    <style>
+        :root {
+            --black: #121212;
+            --light-black: #1E1E1E;
+            --primary: #BB86FC;
+            --text-main: #F8F8F8;
+            --text-secondary: #B0B0B0;
+            --border: #232323;
+            --radius: 0.75rem;
+            --transition: all 0.2s cubic-bezier(.4,0,.2,1);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: var(--black);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 2rem 1.5rem;
+            background: var(--light-black);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(34,34,34,0.10);
+        }
+        h2, h1, h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        form { margin-top: 20px; }
+        input, button {
+            padding: 0.75rem 1rem;
+            margin: 5px 0;
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius);
+            width: 100%;
+            background: var(--black);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        input:focus {
+            outline: 2px solid var(--primary);
+            background: var(--light-black);
+        }
+        button {
+            background: var(--primary);
+            color: var(--black);
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+        button:hover {
+            background: var(--primary);
+            filter: brightness(1.1);
+        }
+        a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+        a:hover { color: var(--primary); text-decoration: underline; }
+        .error { color: #ff6b6b; }
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html> 
