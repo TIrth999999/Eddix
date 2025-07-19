@@ -507,7 +507,6 @@
                     <h4 class="editor-title" id="editorTitle">No file selected</h4>
                     <div class="editor-actions">
                         <button class="btn btn-secondary" onclick="closeFile()">✕ Close</button>
-                        <button class="btn btn-success" id="saveBtn" onclick="saveAllFiles()" style="display:none;">💾 Save</button>
                     </div>
                 </div>
                 <div id="editorPlaceholder">
@@ -765,11 +764,34 @@
             if (changeTimeout) {
                 clearTimeout(changeTimeout);
             }
-            // Mark file as having unsaved changes
-            unsavedChanges[currentFileId] = editor.getValue();
-            updateFileTreeUnsaved(currentFileId, true);
-            // Show save button
-            document.getElementById('saveBtn').style.display = '';
+            const changeData = {
+                type: 'file_change',
+                file_id: currentFileId,
+                content: editor.getValue(),
+                operation: {
+                    type: 'change',
+                    from: change.from,
+                    to: change.to,
+                    text: change.text,
+                    version: localVersion
+                }
+            };
+            ws.send(JSON.stringify(changeData));
+            lastSentVersion = localVersion;
+            changeTimeout = setTimeout(() => {
+                if (localVersion > lastSentVersion && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        type: 'file_change',
+                        file_id: currentFileId,
+                        content: editor.getValue(),
+                        operation: {
+                            type: 'sync',
+                            version: localVersion
+                        }
+                    }));
+                    lastSentVersion = localVersion;
+                }
+            }, 300);
         }
 
         function updateCursorInfo() {
@@ -834,37 +856,6 @@
             if (wrapper) wrapper.scrollTop = 0;
             if (editor && editor.getScrollerElement) {
                 editor.getScrollerElement().scrollTop = 0;
-            }
-            // Hide save button
-            document.getElementById('saveBtn').style.display = 'none';
-        }
-
-        function saveAllFiles() {
-            if (Object.keys(unsavedChanges).length === 0) return;
-            ws.send(JSON.stringify({
-                type: 'save_files',
-                files: unsavedChanges
-            }));
-            // Remove unsaved mark
-            for (const fileId in unsavedChanges) {
-                updateFileTreeUnsaved(fileId, false);
-            }
-            // Clear unsaved changes
-            for (const key in unsavedChanges) delete unsavedChanges[key];
-            // Hide save button
-            document.getElementById('saveBtn').style.display = 'none';
-        }
-
-        function updateFileTreeUnsaved(fileId, unsaved) {
-            const item = document.querySelector(`.tree-item[data-file-id='${fileId}']`);
-            if (item) {
-                if (unsaved) {
-                    item.style.background = 'var(--primary)';
-                    item.style.color = 'var(--black)';
-                } else {
-                    item.style.background = '';
-                    item.style.color = '';
-                }
             }
         }
 
@@ -1080,7 +1071,7 @@
                                 file_id: currentFileId,
                                 content: editor.getValue(),
                                 operation: {
-                                    type: 'save',
+                                    type: 'sync',
                                     version: localVersion
                                 }
                             }));

@@ -6,8 +6,6 @@ from django.contrib.auth.models import AnonymousUser
 
 # In-memory user presence tracking (for demo; use cache for production)
 room_users = {}
-# In-memory unsaved changes per room: {room_code: {file_id: content}}
-room_unsaved_changes = {}
 
 class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -20,9 +18,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         users = room_users.setdefault(self.room_code, set())
         users.add(self.username)
         room_users[self.room_code] = users
-        # Initialize unsaved changes dict for this room if not present
-        if self.room_code not in room_unsaved_changes:
-            room_unsaved_changes[self.room_code] = {}
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
@@ -37,8 +32,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             room_users[self.room_code] = users
         else:
             room_users.pop(self.room_code, None)
-            # If no users left, discard unsaved changes
-            room_unsaved_changes.pop(self.room_code, None)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         # Broadcast updated user list
         await self.broadcast_user_list()
@@ -51,8 +44,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             file_id = data['file_id']
             content = data['content']
             operation = data.get('operation', {})
-            # Store unsaved change in memory only
-            room_unsaved_changes.setdefault(self.room_code, {})[str(file_id)] = content
+            # Save to database on every change
+            await self.save_file_content(file_id, content)
             # Broadcast to other users
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -64,14 +57,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     'sender': self.channel_name
                 }
             )
-        elif message_type == 'save_files':
-            files = data.get('files', {})
-            # Save all provided files to DB
-            for file_id, content in files.items():
-                await self.save_file_content(file_id, content)
-            # Remove from unsaved changes
-            for file_id in files:
-                room_unsaved_changes.setdefault(self.room_code, {}).pop(str(file_id), None)
         elif message_type == 'chat_message':
             message = data['message']
             username = self.username
